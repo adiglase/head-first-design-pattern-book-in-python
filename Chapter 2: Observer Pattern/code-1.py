@@ -126,10 +126,38 @@ class CurrentConditionsDisplay(ObserverInterface, DisplayElementInterface):
         print(f"Current conditions: {self.temperature}F degrees and {self.humidity}% humidity")
 
 
+class HeatIndexDisplay(ObserverInterface, DisplayElementInterface):
+    def __init__(self, weather_data: SubjectInterface):
+        self.heat_index = None
+        self.weather_data = weather_data
+
+        weather_data.registerObserver(self)
+
+    def update(self, temperature: float, humidity: float, pressure: float) -> None:
+        self.heat_index = self.compute_index(temperature, humidity)
+        self.display()
+
+    def display(self) -> None:
+        print(f"Heat index is {self.heat_index}")
+
+    def compute_index(self, t, rh):
+        index = (float)((16.923 + (0.185212 * t) + (5.37941 * rh) - (0.100254 * t * rh) +
+		(0.00941695 * (t * t)) + (0.00728898 * (rh * rh)) +
+		(0.000345372 * (t * t * rh)) - (0.000814971 * (t * rh * rh)) +
+		(0.0000102102 * (t * t * rh * rh)) - (0.000038646 * (t * t * t)) + (0.0000291583 *  
+		(rh * rh * rh)) + (0.00000142721 * (t * t * t * rh)) +
+		(0.000000197483 * (t * rh * rh * rh)) - (0.0000000218429 * (t * t * t * rh * rh)) +     
+		0.000000000843296 * (t * t * rh * rh * rh)) -
+		(0.0000000000481975 * (t * t * t * rh * rh * rh)))
+        
+        return index;
+
+
 class WeatherStation:
     def main(self):
         weather_data = WeatherData()
         current_display = CurrentConditionsDisplay(weather_data)
+        heat_index_display = HeatIndexDisplay(weather_data)
 
         weather_data.setMeasurements(80, 65, 30.4)
         weather_data.setMeasurements(82, 70, 29.2)
