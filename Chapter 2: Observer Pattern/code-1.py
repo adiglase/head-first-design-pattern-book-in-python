@@ -37,8 +37,8 @@ class SubjectInterface(ABC):
         pass
 
     @abstractmethod
-    # This method is called to notify all observers when the Subject's state
     def notifyObservers(self):
+        # This method is called to notify all observers when the Subject's state
         pass
 
 
@@ -124,3 +124,17 @@ class CurrentConditionsDisplay(ObserverInterface, DisplayElementInterface):
         display() just prints out the most recent temp and humidity.
         """
         print(f"Current conditions: {self.temperature}F degrees and {self.humidity}% humidity")
+
+
+class WeatherStation:
+    def main(self):
+        weather_data = WeatherData()
+        current_display = CurrentConditionsDisplay(weather_data)
+
+        weather_data.setMeasurements(80, 65, 30.4)
+        weather_data.setMeasurements(82, 70, 29.2)
+        weather_data.setMeasurements(78, 90, 29.2)
+
+
+if __name__ == "__main__":
+    WeatherStation().main()
